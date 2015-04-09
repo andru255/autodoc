@@ -1,13 +1,52 @@
 var through2 = require("through2");
-var wrapperText = require("./helper/wrapper-text");
+var path = require("path");
+var gutil = require("gulp-util");
 
-var renderTemplate = function(template, data){
+var Helper_WrapperText = require("./helper/wrapper_text");
+var Helper_StringFile = require("./helper/string_file");
+
+var parseFeedContent = function(path, fileName, whenExistsFile, whenFileNotExists) {
+    var defaultContent = {order:[]},
+        feedContent;
+    try {
+        var fileContent =  Helper_StringFile(path, fileName);
+        whenExistsFile.call(this, JSON.parse(fileContent));
+    } catch(err){
+        if(typeof whenFileNotExists === "function"){
+            whenFileNotExists.call(this, err);
+        }
+    }
+};
+
+var printTags = function(tags){
     var result = "";
-    for(var key in data){
-        var toReplace = new RegExp("{{"+ key.toUpperCase()+"}}", "gi");
-        result+= template.replace(toReplace, data[key]);
+    for(var i = 0; i < tags.length; i++){
+        result += gutil.template("* <%= tag %>\n", {tag: tags[i], file:""} );
     }
     return result;
+};
+
+var printComment = function(dataObject) {
+    var startComment        = "/**\n";
+    var endComment          = "**/\n";
+    var templateConstant    = "";
+
+    var template            = startComment;
+
+    var dynamicFeedtemplate = "* @property <%= name %>\n";
+    dynamicFeedtemplate    += "* @type <%= type %>\n";
+
+    template += gutil.template(dynamicFeedtemplate, {
+        "name": dataObject.name,
+        "type": dataObject.type,
+        "file": ""
+    });
+
+    template += printTags(dataObject.tags);
+    template += endComment;
+
+
+    return template;
 };
 
 var Task = function( gulp, options, libraries ){
@@ -19,28 +58,23 @@ var Task = function( gulp, options, libraries ){
             }
 
             try {
-                var toInsert = "/** Hi :D\n ";
+
+                var that = this;
+                var toInsert = "/** {{DESCRIPTION}} ";
                 toInsert    += "*  I'm a dummy content! and this is a function called {{NAME}} \n";
                 toInsert    += " */\n";
 
-                objWrapperContent  = new wrapperText(file.contents);
-
-                var order = [
-                    "suma",
-                    "resta"
-                ];
-
-                for(var i = 0; i < order.length; i++){
-                    objWrapperContent.searchAndDo(order[i], function(founded, lines){
-                        objWrapperContent.appendContentToLine(lines[0], renderTemplate(toInsert, {
-                                name: order[i]
-                            }
-                        ));
-                    });
-                }
-
-                file.contents = new Buffer(objWrapperContent.getContent());
-                this.push(file);
+                var objWrapperContent  = new Helper_WrapperText(file.contents);
+                parseFeedContent(options.config.feed, path.basename(file.history), function(parsedContent){
+                    var order = parsedContent.items;
+                    for(var i = 0; i < order.length; i++){
+                        objWrapperContent.searchAndDo(order[i].name, function(founded, lines){
+                            objWrapperContent.appendContentToLine(lines[0], printComment(order[i]));
+                        });
+                    }
+                    file.contents = new Buffer(objWrapperContent.getContent());
+                    that.push(file);
+                });
 
             } catch(err){
                 console.warn("Error caught commenter:" + err);
@@ -53,7 +87,7 @@ var Task = function( gulp, options, libraries ){
 
     var taskSelf = function(){
         gulp.src(options.src)
-            .pipe(withCommentInPipe())
+            .pipe(withCommentInPipe(options.config))
             .pipe(gulp.dest(options.target))
     };
 

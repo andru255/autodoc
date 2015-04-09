@@ -1,4 +1,7 @@
 var through2 = require("through2");
+//Exporter
+var Exporter = require("./exporter");
+
 var Task = function(gulp, options, libraries){
 
     var templates = "@method {{methodName}}";
@@ -34,9 +37,9 @@ var Task = function(gulp, options, libraries){
             try {
                 var stringCode = String(file.contents),
                     jsonCode = JSON.parse(stringCode),
-                    test = readJSON(jsonCode);
+                    objExporter = new Exporter(stringCode);
 
-                file.contents = new Buffer(test);
+                file.contents = new Buffer(objExporter.generateData());
                 this.push(file);
 
             } catch(err){

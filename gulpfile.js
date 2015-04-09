@@ -20,10 +20,12 @@ var paths = {
     },
     translator : {
         src: SRC_PATH + "esprima/*.js",
-        target: SRC_PATH + "translator/"
+        target: SRC_PATH + "real-translator/"
     },
     commenter: {
         src: SRC_PATH + "*.js",
+        feed: SRC_PATH + "real-translator/",
+        external: "./docsrc/",
         target: BUILD_PATH + "dist/"
     }
 };
@@ -46,6 +48,10 @@ runMainTask("translator", {
 });
 
 runMainTask("commenter", {
+    config:{
+        feed: paths.commenter.feed,
+        external: paths.commenter.external
+    },
     src: paths.commenter.src,
     target: paths.commenter.target
 });
