@@ -34,7 +34,7 @@ var Task = function(gulp, options, libraries){
     };
 
     var taskSelf = function(){
-        gulp.src(options.src)
+        return gulp.src(options.src)
             .pipe(esprimaInPipe(options.config))
             .pipe(gulp.dest(options.target))
     };

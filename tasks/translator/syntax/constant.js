@@ -1,4 +1,4 @@
-var SyntaxConstant = function(node){
+var SyntaxConstant = function(node, config){
     this.nodeToCompare = {
       "type": "VariableDeclaration",
       "declarations": [
@@ -6,18 +6,19 @@ var SyntaxConstant = function(node){
           "type": "VariableDeclarator",
           "id": {
             "type": "Identifier",
-            "name": "CONST_APP"
+            "name": ""
           },
           "init": {
-            "type": "Literal",
-            "value": "MyApp",
-            "raw": "\"MyApp\""
+            "type": "",
+            "value": "",
+            "raw": ""
           }
         }
       ],
       "kind": "var"
     };
 
+    this.config = config || {consider:[]};
     this.node = node;
     this.tags = [ "@static", "@final" ];
     this.result = {};
@@ -36,7 +37,8 @@ SyntaxConstant.prototype.getDeclaration = function(){
              declaration = this.node[keyName][0];
              result.type  = declaration.init.type;
              result.name  = declaration.id.name;
-             result.value = declaration.init.value;
+             result.value = this.translateValue(declaration.init.type,
+                                declaration.init.value);
          } else {
             result.none = true;
          }
@@ -46,6 +48,20 @@ SyntaxConstant.prototype.getDeclaration = function(){
      return result;
 };
 
+SyntaxConstant.prototype.translateValue = function(type, value){
+    var result = "";
+    var values = {
+        "ObjectExpression": {},
+        "ArrayExpression": []
+    };
+    if(values[type]){
+        result = values[type];
+    } else {
+        result = value;
+    }
+    return result;
+};
+
 SyntaxConstant.prototype.checkType = function(){
     var keyName = "type";
     return this.node[keyName] == this.nodeToCompare[keyName];
@@ -53,11 +69,16 @@ SyntaxConstant.prototype.checkType = function(){
 
 SyntaxConstant.prototype.generateData = function(whenIsConstant, whenNoIsConstant){
     var declaration = this.getDeclaration();
-    if(this.isUpperCase(declaration.name)){
+    if(this.config.consider.indexOf(declaration.name) == -1){
+        if(this.isUpperCase(declaration.name)){
+            declaration.tags = this.tags;
+            whenIsConstant.call(this, declaration);
+        } else {
+            whenNoIsConstant.call(this);
+        }
+    } else {
         declaration.tags = this.tags;
         whenIsConstant.call(this, declaration);
-    } else {
-        whenNoIsConstant.call(this);
     }
 };
 

@@ -24,11 +24,11 @@ var Datatype_Variable = function(value){
         isBoolean: function(value){
             return /^(true|false|1|0)$/ig.test(value);
         },
-        isArray: function(){
-            return false;
+        isArray: function(value){
+            return Object.prototype.toString.call(value) === "[object Array]";
         },
-        isObject: function(){
-            return false;
+        isObject: function(value){
+            return ( typeof value === "object" ) && ( value !== null);
         }
     };
 };

@@ -3,8 +3,9 @@ var Datatype_Variable = require("./datatype/variable");
 //Syntax
 var SyntaxConstant = require("./syntax/constant");
 
-var exporter = function(data){
+var exporter = function(data, config){
     this.readJSON(data);
+    this.config = config || {};
 };
 
 exporter.prototype.readJSON = function(data) {
@@ -25,7 +26,8 @@ exporter.prototype.eachNode = function(whichNode){
 
 exporter.prototype.verifySyntax = function(nodeToTranslate, whenItsDone) {
     var result = {};
-    var objConstant = new SyntaxConstant(nodeToTranslate);
+    var objConstant = new SyntaxConstant(nodeToTranslate, this.config.constant);
+
     var objDataType;
     objConstant.generateData(function(nodeResult){
         objDataType = new Datatype_Variable(nodeResult.value);
@@ -48,7 +50,7 @@ exporter.prototype.generateData = function() {
     });
 
     dataToExport.items = items;
-    return JSON.stringify(dataToExport);
+    return JSON.stringify(dataToExport, null, 2);
 };
 
 module.exports = exporter;

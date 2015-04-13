@@ -45,7 +45,6 @@ var printComment = function(dataObject) {
     template += printTags(dataObject.tags);
     template += endComment;
 
-
     return template;
 };
 
@@ -58,15 +57,11 @@ var Task = function( gulp, options, libraries ){
             }
 
             try {
-
                 var that = this;
-                var toInsert = "/** {{DESCRIPTION}} ";
-                toInsert    += "*  I'm a dummy content! and this is a function called {{NAME}} \n";
-                toInsert    += " */\n";
-
                 var objWrapperContent  = new Helper_WrapperText(file.contents);
                 parseFeedContent(options.config.feed, path.basename(file.history), function(parsedContent){
                     var order = parsedContent.items;
+                    console.log('order', order);
                     for(var i = 0; i < order.length; i++){
                         objWrapperContent.searchAndDo(order[i].name, function(founded, lines){
                             objWrapperContent.appendContentToLine(lines[0], printComment(order[i]));
@@ -86,7 +81,7 @@ var Task = function( gulp, options, libraries ){
     };
 
     var taskSelf = function(){
-        gulp.src(options.src)
+        return gulp.src(options.src)
             .pipe(withCommentInPipe(options.config))
             .pipe(gulp.dest(options.target))
     };
