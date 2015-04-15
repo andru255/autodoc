@@ -19,21 +19,75 @@
       "kind": "var"
     },
     {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "AssignmentExpression",
+        "operator": "=",
+        "left": {
+          "type": "MemberExpression",
+          "computed": false,
+          "object": {
             "type": "Identifier",
-            "name": "YOSON_2"
+            "name": "yOSON"
           },
-          "init": {
-            "type": "ArrayExpression",
-            "elements": []
+          "property": {
+            "type": "Identifier",
+            "name": "statHost"
           }
+        },
+        "right": {
+          "type": "Literal",
+          "value": "",
+          "raw": "\"\""
         }
-      ],
-      "kind": "var"
+      }
+    },
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "AssignmentExpression",
+        "operator": "=",
+        "left": {
+          "type": "MemberExpression",
+          "computed": false,
+          "object": {
+            "type": "Identifier",
+            "name": "yOSON"
+          },
+          "property": {
+            "type": "Identifier",
+            "name": "version"
+          }
+        },
+        "right": {
+          "type": "Literal",
+          "value": 1.2,
+          "raw": "1.2"
+        }
+      }
+    },
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "AssignmentExpression",
+        "operator": "=",
+        "left": {
+          "type": "MemberExpression",
+          "computed": false,
+          "object": {
+            "type": "Identifier",
+            "name": "yOSON"
+          },
+          "property": {
+            "type": "Identifier",
+            "name": "order"
+          }
+        },
+        "right": {
+          "type": "ArrayExpression",
+          "elements": []
+        }
+      }
     },
     {
       "type": "VariableDeclaration",

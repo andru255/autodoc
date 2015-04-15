@@ -5,13 +5,10 @@
 * @final
 **/
 var yOSON = {};
-/**
-* @property YOSON_2
-* @type Array
-* @static
-* @final
-**/
-var YOSON_2 = [];
+yOSON.statHost = "";
+yOSON.version = 1.2;
+yOSON.order = [];
+
 /**
 * @property MY_APP
 * @type String

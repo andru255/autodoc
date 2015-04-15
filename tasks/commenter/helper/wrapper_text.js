@@ -26,14 +26,15 @@ wrapperText.prototype.getContent = function() {
 wrapperText.prototype.search = function(queryString){
     var lines = this.content.split("\n");
     var index;
-    var results = []
+    var results = [];
+    var regexToSearch = new RegExp(queryString, "ig");
     for(index = 0; index < lines.length; index++){
-        if(lines[index].indexOf(queryString) != -1){
+        if(lines[index].search(regexToSearch) != -1){
             results.push(index);
         }
     }
     return {
-        founded:this.content.indexOf(queryString),
+        founded: this.content.search(regexToSearch),
         lines: results
     };
 };

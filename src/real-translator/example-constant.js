@@ -10,15 +10,6 @@
       ]
     },
     {
-      "type": "Array",
-      "name": "YOSON_2",
-      "value": [],
-      "tags": [
-        "@static",
-        "@final"
-      ]
-    },
-    {
       "type": "String",
       "name": "MY_APP",
       "value": "demo",
